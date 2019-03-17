@@ -30,64 +30,60 @@ class Node {
   }
 
   remove() {
-    if (this.parent !== null) {
+    if (this.parent) {
       this.parent.removeChild(this);
     }
   }
 
   swapWithParent() {
-    if (this.parent !== null) {
-      const t = {
+    if (this.parent) {
+      const temp = {
         parent: this.parent,
         parentParent: this.parent.parent || null,
         parentLeft: this.parent.left,
         parentRight: this.parent.right
       };
 
+      // parent to child
       this.parent.left = this.left;
-      if (this.left !== null) {
+      if (this.left) {
         this.parent.left.parent = this.parent;
       }
       this.parent.right = this.right;
-      if (this.right !== null) {
+      if (this.right) {
         this.parent.right.parent = this.parent;
       }
       this.parent.parent = this;
 
-      if (t.parentLeft === this) {
-        this.left = t.parent;
+      // child to parent
+      if (temp.parentLeft === this) {
+        this.left = temp.parent;
       } else {
-        this.left = t.parentLeft;
-        if (this.left !== null) {
+        this.left = temp.parentLeft;
+        if (this.left) {
           this.left.parent = this;
         }
       }
-      if (t.parentRight === this) {
-        this.right = t.parent;
+      if (temp.parentRight === this) {
+        this.right = temp.parent;
       } else {
-        this.right = t.parentRight;
-        if (this.right !== null) {
+        this.right = temp.parentRight;
+        if (this.right) {
           this.right.parent = this;
         }
       }
-      this.parent = t.parentParent;
+      this.parent = temp.parentParent;
 
-      if (t.parentParent !== null && t.parentParent.left === t.parent) {
-        t.parentParent.left = this;
+      // parent of parent
+      if (temp.parentParent && temp.parentParent.left === temp.parent) {
+        temp.parentParent.left = this;
       } else {
-        if (t.parentParent !== null && t.parentParent.right === t.parent) {
-          t.parentParent.right = this;
+        if (temp.parentParent && temp.parentParent.right === temp.parent) {
+          temp.parentParent.right = this;
         }
       }
-
     }
   }
 }
 
 module.exports = Node;
-
-const parent = new Node(15, 42);
-const child = new Node(42, 15);
-
-parent.appendChild(child);
-child.swapWithParent();
